@@ -16,14 +16,16 @@ public class PlayerController : MonoBehaviour
     {
         playerInputEvents.OnMoveRequested += HandleMove;
         playerInputEvents.OnDefenseRequested += HandleDefense;
-        playerInputEvents.OnAttackRequested += HandleAttack;
+        playerInputEvents.OnAttackStartRequested += HandleAttackStart;
+        playerInputEvents.OnAttackStopRequested += HandleAttackStop;
     }
 
     private void OnDisable()
     {
         playerInputEvents.OnMoveRequested -= HandleMove;
         playerInputEvents.OnDefenseRequested -= HandleDefense;
-        playerInputEvents.OnAttackRequested -= HandleAttack;
+        playerInputEvents.OnAttackStartRequested -= HandleAttackStart;
+        playerInputEvents.OnAttackStopRequested -= HandleAttackStop;
     }
 
     private void Start()
@@ -43,8 +45,13 @@ public class PlayerController : MonoBehaviour
         _playerDefense.Defense();
     }
 
-    private  void HandleAttack()
+    private  void HandleAttackStart()
     {
-        _playerAttack.Attack();
+        _playerAttack.AttackStart();
+    }
+
+    private  void HandleAttackStop()
+    {
+        _playerAttack.AttackStop();
     }
 }

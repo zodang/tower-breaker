@@ -5,8 +5,13 @@ using UnityEngine;
 /// </summary>
 public class PlayerAttack : MonoBehaviour
 {
-    public void Attack()
+    public void AttackStart()
     {
-        Debug.Log("공격");
+        Debug.Log("공격 시작");
+    }
+
+    public void AttackStop()
+    {
+        Debug.Log("공격 중지");
     }
 }

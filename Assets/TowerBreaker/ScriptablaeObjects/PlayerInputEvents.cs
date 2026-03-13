@@ -6,8 +6,10 @@ public class PlayerInputEvents : ScriptableObject
 {
     public event Action OnMoveRequested;
     public event Action OnDefenseRequested;
-    public event Action OnAttackRequested;
+    public event Action OnAttackStartRequested;
+    public event Action OnAttackStopRequested;
 
+    // ControlPanel에서 호출
     public void RequestMove()
     {
         OnMoveRequested?.Invoke();
@@ -18,15 +20,20 @@ public class PlayerInputEvents : ScriptableObject
         OnDefenseRequested?.Invoke();
     }
 
-    public void RequestAttack()
+    public void RequestAttackStart()
     {
-        OnAttackRequested?.Invoke();
+        OnAttackStartRequested?.Invoke();
+    }
+
+    public void RequestAttackStop()
+    {
+        OnAttackStopRequested?.Invoke();
     }
 
     public void ClearAllListeners()
     {
         OnMoveRequested = null;
         OnDefenseRequested = null;
-        OnAttackRequested = null;
+        OnAttackStartRequested = null;
     }
 }
