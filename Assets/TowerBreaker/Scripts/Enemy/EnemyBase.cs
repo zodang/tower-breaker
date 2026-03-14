@@ -1,42 +1,60 @@
 using System;
 using UnityEngine;
+using DG.Tweening;
 
 public class EnemyBase : MonoBehaviour
 {
-    [SerializeField] protected CombatConfig _config;
+    [SerializeField] protected CombatEvents combatEvents;
 
-    public Rigidbody2D Rb { get; private set; }
+    public float MaxHp = 10f;
+    public float CurrentHp;
+    public float CurrentSpeed = 1f;
+    public float CurrentWeight = 1f;
+
+    public Rigidbody2D RigidBody { get; private set; }
     public bool IsDead { get; private set; }
-
-    protected float _maxHP;
-    protected float _currentHP;
 
     public Action<EnemyBase> OnDied;
 
     protected virtual void Awake()
     {
-        Rb = GetComponentInChildren<Rigidbody2D>();
+        RigidBody = GetComponent<Rigidbody2D>();
     }
 
-    protected virtual void Initialize(float hp)
+    protected void Initialize(float hp, float speed, float weight)
     {
-        _maxHP = hp;
-        _currentHP = _maxHP;
+        MaxHp = hp;
+        CurrentHp = MaxHp;
+        CurrentSpeed = speed;
+        CurrentWeight = weight;
+    }
+
+    protected virtual void Update()
+    {
+        // 기본 이동
+        RigidBody.MovePosition(transform.position + Vector3.left * (Time.deltaTime * CurrentSpeed));
+    }
+
+    public virtual void PushBack(float force)
+    {
+        // 기본 밀림
+        float pushForce = force / CurrentWeight;
+        float targetPos = RigidBody.position.x + force + pushForce;
+
+        RigidBody.DOKill();
+        RigidBody.DOMoveX(targetPos, 0.15f).SetEase(Ease.OutQuad);
     }
 
     public virtual void TakeDamage(float damage)
     {
-        _currentHP -= damage;
-
+        // 기본 피격
+        CurrentHp -= damage;
         OnTakeDamage(damage);
 
-        if (_currentHP <= 0)
-        {
-            Die();
-        }
+        if (CurrentHp <= 0) Die();
     }
 
-    protected virtual void Die()
+    public virtual void Die()
     {
         OnDied?.Invoke(this);
         Destroy(gameObject);

@@ -1,8 +1,5 @@
-using UnityEngine;
-
-public enum GameState
+public enum EliteEnemyType
 {
-    Title,
-    MainPlay,
-    GameOver
+    HpElite,
+    SpeedElite,
 }

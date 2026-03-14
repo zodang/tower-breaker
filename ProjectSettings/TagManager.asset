@@ -11,12 +11,12 @@ TagManager:
   - 
   - Water
   - UI
+  - Player
   - 
   - 
   - 
-  - 
-  - blocking
-  - enemy
+  - Normal Enemy
+  - Elite Enemy
   - 
   - 
   - 

@@ -3,13 +3,10 @@ using UnityEngine;
 
 public class NormalCluster : MonoBehaviour
 {
-    public int Count => _units.Count;
-    public bool IsEmpty => _units.Count == 0;
-
-    [SerializeField] private CombatConfig config;
     [SerializeField] private CombatEvents combatEvents;
 
-    private readonly List<NormalEnemy> _units = new();
+    public List<NormalEnemy> liveEnemies = new();
+    public List<NormalEnemy> deadEnemies = new();
 
     private float _speedMultiple = 1f;
     private float _hpMultiple = 1;
@@ -18,13 +15,13 @@ public class NormalCluster : MonoBehaviour
     private void OnEnable()
     {
         combatEvents.OnNormalAttack += HandleNormalAttack;
-        combatEvents.OnDefense += HandleDefense;
+        combatEvents.OnNormalDefense += HandleNormalDefense;
     }
 
     private void OnDisable()
     {
         combatEvents.OnNormalAttack -= HandleNormalAttack;
-        combatEvents.OnDefense -= HandleDefense;
+        combatEvents.OnNormalDefense -= HandleNormalDefense;
     }
 
     private void HandleNormalAttack(List<NormalEnemy> enemies, float force)
@@ -37,11 +34,8 @@ public class NormalCluster : MonoBehaviour
         }
     }
 
-    private void HandleDefense(Vector2 playerPos, float force)
+    private void HandleNormalDefense(float force)
     {
-        if (IsEmpty) return;
-        // 현재 단계 군집인지 확인 필요
-
         PushEnemies(force);
     }
 
@@ -49,15 +43,15 @@ public class NormalCluster : MonoBehaviour
 
     public void Register(NormalEnemy unit)
     {
-        if (_units.Contains(unit)) return;
+        if (liveEnemies.Contains(unit)) return;
         unit.OnDied += HandleUnitDied;
-        _units.Add(unit);
+        liveEnemies.Add(unit);
     }
 
     public void Unregister(NormalEnemy unit)
     {
         unit.OnDied -= HandleUnitDied;
-        _units.Remove(unit);
+        liveEnemies.Remove(unit);
     }
 
     private void HandleUnitDied(EnemyBase unit)
@@ -73,11 +67,11 @@ public class NormalCluster : MonoBehaviour
     {
         if (_isPushing) return;
 
-        foreach (var enemy in _units)
+        foreach (var enemy in liveEnemies)
         {
             if (enemy == null) continue;
 
-            enemy.Push(force);
+            enemy.PushBack(force);
         }
     }
 }

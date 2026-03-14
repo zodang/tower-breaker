@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -15,8 +14,6 @@ public class PlayerDefense : MonoBehaviour
 
     private bool _canDefense = true;
 
-    private readonly HashSet<Collider2D> _facingEnemies = new();
-
     public void Defense()
     {
         if (!_canDefense) return;
@@ -24,14 +21,23 @@ public class PlayerDefense : MonoBehaviour
 
         Debug.Log("방어");
         StartCoroutine(DefenseRoutine());
-
     }
 
     private IEnumerator DefenseRoutine()
     {
         _canDefense = false;
 
-        combatEvents.RequestDefense(transform.position, config.DefensePushForce);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f, enemyLayer);
+
+        foreach (var col in hits)
+        {
+            if (col.TryGetComponent<EliteEnemy>(out var elite))
+            {
+                combatEvents.RequestEliteDefense(elite, config.DefensePushForce);
+            }
+        }
+
+        combatEvents.RequestNormalDefense(config.DefensePushForce);
         ReturnOriginalPosition();
         yield return new WaitForSeconds(config.DefenseCooldown);
 

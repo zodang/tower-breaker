@@ -19,11 +19,11 @@ MonoBehaviour:
   DashCooldown: 0.5
   DashGap: 0.5
   DefensePushRange: 3
-  DefensePushForce: 10
+  DefensePushForce: 0.15
   DefenseCooldown: 0.8
   DefenseGap: 0.5
   AttackRange: 1
-  AttackDamage: 20
+  AttackDamage: 5
   AttackInterval: 0.3
   EnemyMoveSpeed: 1.5
   EnemyMaxHP: 60

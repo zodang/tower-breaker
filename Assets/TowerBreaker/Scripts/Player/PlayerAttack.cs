@@ -36,19 +36,24 @@ public class PlayerAttack : MonoBehaviour
 
     private void PerformAttack()
     {
-        var enemies = new List<NormalEnemy>();
+        var normal = new List<NormalEnemy>();
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.AttackRange, enemyLayer);
 
         foreach (var col in hits)
         {
-            if (col.TryGetComponent<NormalEnemy>(out var enemy))
+            if (col.TryGetComponent<NormalEnemy>(out var n))
             {
-                enemies.Add(enemy);
+                normal.Add(n);
+            }
+
+            if (col.TryGetComponent<EliteEnemy>(out var elite))
+            {
+                combatEvents.RequestEliteAttack(elite, config.AttackDamage);
             }
         }
 
-        combatEvents.RequestNormalAttack(enemies, config.AttackDamage);
+        combatEvents.RequestNormalAttack(normal, config.AttackDamage);
     }
 
     private void OnDrawGizmosSelected()

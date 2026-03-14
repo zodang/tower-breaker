@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
         if (!_canMove || _isMoving) return;
 
         float gap = GetForwardGap();
-        if (gap < 0.1f) return;
+        if (gap < 0.15f) return;
 
         StartCoroutine(DashRoutine());
     }
@@ -42,9 +42,8 @@ public class PlayerMovement : MonoBehaviour
     {
         _sequence?.Kill();
         rigidBody.linearVelocity = Vector2.zero;
-        float endValue = rigidBody.position.x + GetForwardGap();
 
-        Debug.Log($"{rigidBody.position.x} / {GetForwardGap()}");
+        float endValue = rigidBody.position.x + GetForwardGap() - 0.15f;
 
         _sequence = DOTween.To(
                 () => rigidBody.position.x,

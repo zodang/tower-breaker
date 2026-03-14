@@ -1,21 +1,13 @@
-using System;
-using DG.Tweening;
-using UnityEngine;
-
 public class NormalEnemy : EnemyBase
 {
-    public float HP = 100;
+    public float NormalHp = 10f;
+    public float NormalSpeed = 4f;
+    public float NormalWeight = 1f;
 
     protected override void Awake()
     {
         base.Awake();
-        Initialize(_config.EnemyMaxHP);
-    }
-
-    public void Push(float force)
-    {
-        float targetPos = Rb.position.x + force;
-        Rb.DOMoveX(targetPos, 0.3f).SetEase(Ease.OutQuad);
+        Initialize(NormalHp, NormalSpeed, NormalWeight);
     }
 
     protected override void OnTakeDamage(float damage)

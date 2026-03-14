@@ -5,27 +5,28 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CombatEvents", menuName = "Scriptable Objects/DefenseEvents")]
 public class CombatEvents : ScriptableObject
 {
-    // 일반 적 공격 — NormalSquad 전체가 밀려남
     public event Action<List<NormalEnemy>, float> OnNormalAttack;
-
-    // 특수 적 공격 — 해당 EliteEnemy만 피격
     public event Action<EliteEnemy, float> OnEliteAttack;
-
-    // 방어 — 가장 가까운 NormalSquad가 밀려남
-    public event Action<Vector2, float> OnDefense;
+    public event Action<float> OnNormalDefense;
+    public event Action<EliteEnemy, float> OnEliteDefense;
 
     public void RequestNormalAttack(List<NormalEnemy> enemies, float force)
     {
         OnNormalAttack?.Invoke(enemies, force);
     }
 
-    public void RequestEliteAttack(EliteEnemy target, float damage)
+    public void RequestEliteAttack(EliteEnemy enemy, float damage)
     {
-        OnEliteAttack?.Invoke(target, damage);
+        OnEliteAttack?.Invoke(enemy, damage);
     }
 
-    public void RequestDefense(Vector2 playerPos, float force)
+    public void RequestNormalDefense(float force)
     {
-        OnDefense?.Invoke(playerPos, force);
+        OnNormalDefense?.Invoke(force);
+    }
+
+    public void RequestEliteDefense(EliteEnemy enemy, float force)
+    {
+        OnEliteDefense?.Invoke(enemy, force);
     }
 }
