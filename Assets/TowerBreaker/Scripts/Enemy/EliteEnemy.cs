@@ -1,42 +1,32 @@
-
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class EliteEnemy : EnemyBase
 {
-    public EliteEnemyType EliteType;
-    public float EliteHp = 10f;
-    public float EliteSpeed = 4f;
-    public float EliteWeight = 2f;
+    [SerializeField] private EnemyData enemyData;
 
     protected override void Awake()
     {
         base.Awake();
-        Initialize(EliteHp, EliteSpeed, EliteWeight);
+        Initialize(enemyData.Hp, enemyData.Speed, enemyData.Weight);
     }
 
     private void OnEnable()
     {
-        combatEvents.OnEliteAttack += HandleAttack;
-        combatEvents.OnEliteDefense += HandleEliteDefense;
+        combatEvents.RegisterElite(this, HandleAttack, HandleDefense);
     }
 
     private void OnDisable()
     {
-        combatEvents.OnEliteAttack -= HandleAttack;
-        combatEvents.OnEliteDefense -= HandleEliteDefense;
+        combatEvents.UnregisterElite(this);
     }
 
-    private void HandleAttack(EliteEnemy enemy, float force)
+    private void HandleAttack(float damage)
     {
-        if (enemy != this) return;
-
-        TakeDamage(force);
+        TakeDamage(damage); // self-check 불필요
     }
 
-    private void HandleEliteDefense(EliteEnemy enemy, float force)
+    private void HandleDefense(float force)
     {
-        if (enemy != this) return;
         PushBack(force);
     }
 

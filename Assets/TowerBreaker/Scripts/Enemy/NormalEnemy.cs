@@ -1,13 +1,13 @@
+using UnityEngine;
+
 public class NormalEnemy : EnemyBase
 {
-    public float NormalHp = 10f;
-    public float NormalSpeed = 4f;
-    public float NormalWeight = 1f;
+    [SerializeField] private EnemyData enemyData;
 
     protected override void Awake()
     {
         base.Awake();
-        Initialize(NormalHp, NormalSpeed, NormalWeight);
+        Initialize(enemyData.Hp, enemyData.Speed, enemyData.Weight);
     }
 
     protected override void OnTakeDamage(float damage)

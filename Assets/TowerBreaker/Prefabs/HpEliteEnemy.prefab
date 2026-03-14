@@ -125,10 +125,7 @@ MonoBehaviour:
   CurrentHp: 0
   CurrentSpeed: 1
   CurrentWeight: 1
-  EliteType: 0
-  EliteHp: 25
-  EliteSpeed: 4
-  EliteWeight: 1
+  enemyData: {fileID: 11400000, guid: bf865715c235f6a43a5b11c0174630ed, type: 2}
 --- !u!1 &2901250285592127728
 GameObject:
   m_ObjectHideFlags: 0

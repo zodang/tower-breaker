@@ -4,9 +4,7 @@ using UnityEngine;
 public class NormalCluster : MonoBehaviour
 {
     [SerializeField] private CombatEvents combatEvents;
-
-    public List<NormalEnemy> liveEnemies = new();
-    public List<NormalEnemy> deadEnemies = new();
+    private readonly List<NormalEnemy> _units = new();
 
     private float _speedMultiple = 1f;
     private float _hpMultiple = 1;
@@ -24,6 +22,24 @@ public class NormalCluster : MonoBehaviour
         combatEvents.OnNormalDefense -= HandleNormalDefense;
     }
 
+    public void Register(NormalEnemy unit)
+    {
+        if (_units.Contains(unit)) return;
+        unit.OnDied += HandleUnitDied;
+        _units.Add(unit);
+    }
+
+    public void Unregister(NormalEnemy unit)
+    {
+        unit.OnDied -= HandleUnitDied;
+        _units.Remove(unit);
+    }
+
+    private void HandleUnitDied(EnemyBase unit)
+    {
+        if (unit is NormalEnemy normalUnit) Unregister(normalUnit);
+    }
+
     private void HandleNormalAttack(List<NormalEnemy> enemies, float force)
     {
         foreach (var enemy in enemies)
@@ -39,35 +55,11 @@ public class NormalCluster : MonoBehaviour
         PushEnemies(force);
     }
 
-    #region Manage Unit
-
-    public void Register(NormalEnemy unit)
-    {
-        if (liveEnemies.Contains(unit)) return;
-        unit.OnDied += HandleUnitDied;
-        liveEnemies.Add(unit);
-    }
-
-    public void Unregister(NormalEnemy unit)
-    {
-        unit.OnDied -= HandleUnitDied;
-        liveEnemies.Remove(unit);
-    }
-
-    private void HandleUnitDied(EnemyBase unit)
-    {
-        if (unit is NormalEnemy normalUnit) Unregister(normalUnit);
-    }
-
-    #endregion
-
-
-
     private void PushEnemies(float force)
     {
         if (_isPushing) return;
 
-        foreach (var enemy in liveEnemies)
+        foreach (var enemy in _units)
         {
             if (enemy == null) continue;
 

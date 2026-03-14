@@ -11,54 +11,59 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private CombatEvents combatEvents;
     [SerializeField] private LayerMask enemyLayer;
 
+    private readonly Collider2D[] _hitBuffer = new Collider2D[32];
+    private readonly List<NormalEnemy> _normalBuffer = new();
+
     private Coroutine _attackRoutine;
     public void AttackStart()
     {
-        Debug.Log("공격 시작");
         if (_attackRoutine != null) return;
         _attackRoutine = StartCoroutine(AttackLoop());
     }
 
     public void AttackStop()
     {
+        if (_attackRoutine == null) return;
+
         StopCoroutine(_attackRoutine);
         _attackRoutine = null;
     }
 
     private IEnumerator AttackLoop()
     {
+        var interval = new WaitForSeconds(config.AttackInterval);
         while (true)
         {
             PerformAttack();
-            yield return new WaitForSeconds(config.AttackInterval);
+            yield return interval;
         }
     }
 
     private void PerformAttack()
     {
-        var normal = new List<NormalEnemy>();
+        _normalBuffer.Clear();
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.AttackRange, enemyLayer);
-
-        foreach (var col in hits)
+        int hitCount = Physics2D.OverlapCircleNonAlloc(
+            transform.position, config.AttackRange, _hitBuffer, enemyLayer
+        );
+        for (int i = 0; i < hitCount; i++)
         {
-            if (col.TryGetComponent<NormalEnemy>(out var n))
-            {
-                normal.Add(n);
-            }
+            // EnemyBase 한 번만 가져온 후 타입 분기 → GetComponent 호출 최소화
+            if (!_hitBuffer[i].TryGetComponent<EnemyBase>(out var enemy)) continue;
 
-            if (col.TryGetComponent<EliteEnemy>(out var elite))
+            switch (enemy)
             {
-                combatEvents.RequestEliteAttack(elite, config.AttackDamage);
+                case NormalEnemy normal:
+                    _normalBuffer.Add(normal);
+                    break;
+
+                case EliteEnemy elite:
+                    combatEvents.RequestEliteAttack(elite, config.AttackDamage);
+                    break;
             }
         }
 
-        combatEvents.RequestNormalAttack(normal, config.AttackDamage);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, config.AttackRange);
+        if (_normalBuffer.Count > 0)
+            combatEvents.RequestNormalAttack(_normalBuffer, config.AttackDamage);
     }
 }
