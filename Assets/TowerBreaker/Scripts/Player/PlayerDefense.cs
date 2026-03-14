@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerDefense : MonoBehaviour
 {
     [SerializeField] private CombatConfig config;
-    [SerializeField] private CombatEvents combatEvents;
+    [SerializeField] private CombatActionEvents combatActionEvents;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private Rigidbody2D rigidBody;
 
@@ -33,11 +33,11 @@ public class PlayerDefense : MonoBehaviour
         {
             if (col.TryGetComponent<EliteEnemy>(out var elite))
             {
-                combatEvents.RequestEliteDefense(elite, config.DefensePushForce);
+                combatActionEvents.RequestEliteDefense(elite, config.DefensePushForce);
             }
         }
 
-        combatEvents.RequestNormalDefense(config.DefensePushForce);
+        combatActionEvents.RequestNormalDefense(config.DefensePushForce);
         ReturnOriginalPosition();
         yield return new WaitForSeconds(config.DefenseCooldown);
 

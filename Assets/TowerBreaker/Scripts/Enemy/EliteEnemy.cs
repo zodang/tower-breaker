@@ -12,17 +12,17 @@ public class EliteEnemy : EnemyBase
 
     private void OnEnable()
     {
-        combatEvents.RegisterElite(this, HandleAttack, HandleDefense);
+        combatActionEvents.RegisterElite(this, HandleAttack, HandleDefense);
     }
 
     private void OnDisable()
     {
-        combatEvents.UnregisterElite(this);
+        combatActionEvents.UnregisterElite(this);
     }
 
     private void HandleAttack(float damage)
     {
-        TakeDamage(damage); // self-check 불필요
+        TakeDamage(damage);
     }
 
     private void HandleDefense(float force)

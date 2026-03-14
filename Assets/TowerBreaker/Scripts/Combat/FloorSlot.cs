@@ -15,6 +15,7 @@ public class FloorSlot : MonoBehaviour
     public void RegisterEnemy(EnemyBase enemy)
     {
         _aliveEnemies.Add(enemy);
+        enemy.StopMoving();
 
         if (enemy is NormalEnemy normalEnemy) normalCluster.Register(normalEnemy);
         enemy.OnDied += HandleEnemyDied;
@@ -28,6 +29,18 @@ public class FloorSlot : MonoBehaviour
         _deadEnemies.Add(enemy);
 
         if (_aliveEnemies.Count == 0) OnFloorCleared?.Invoke();
+    }
+
+    public void Activate()
+    {
+        foreach (var enemy in _aliveEnemies)
+            enemy.StartMoving();
+    }
+
+    public void Deactivate()
+    {
+        foreach (var enemy in _aliveEnemies)
+            enemy.StopMoving();
     }
 
     public bool IsCleared()

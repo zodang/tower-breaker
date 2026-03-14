@@ -8,12 +8,45 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CombatConfig config;
+    [SerializeField] private StageProgressEvents stageEvents;
     [SerializeField] private Rigidbody2D rigidBody;
     [SerializeField] private Collider2D collider;
     [SerializeField] private LayerMask blockLayer;
 
     private bool _isMoving = false;
     private bool _canMove = true;
+
+    private Tween _sequence;
+
+    private void OnEnable()
+    {
+        stageEvents.OnFloorCleared += HandleFloorCleared;
+    }
+
+    private void OnDisable()
+    {
+        stageEvents.OnFloorCleared -= HandleFloorCleared;
+    }
+
+    private void HandleFloorCleared()
+    {
+        // 진행 중인 이동 상태 초기화
+        StopAllCoroutines();
+        _isMoving = false;
+        _canMove = true;
+
+        // Tween으로 통일 (MovePosition 단발 호출 대신)
+        _sequence?.Kill();
+        rigidBody.linearVelocity = Vector2.zero;
+
+        _sequence = DOTween.To(
+                () => rigidBody.position.x,
+                x => rigidBody.MovePosition(new Vector2(x, rigidBody.position.y)),
+                config.PlayerOriginalPos,
+                0.15f
+            )
+            .SetEase(Ease.OutQuad);
+    }
 
     public void Move()
     {
@@ -37,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
         _isMoving = false;
     }
 
-    private Tween _sequence;
+
     private void ReturnOriginalPosition()
     {
         _sequence?.Kill();

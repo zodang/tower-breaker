@@ -5,24 +5,67 @@ using UnityEngine;
 /// </summary>
 public class StageManager : MonoBehaviour
 {
+    [SerializeField] private StageProgressEvents stageEvents;
     [SerializeField] private EnemySpawner spawner;
     [SerializeField] private FloorManager floorManager;
     [SerializeField] private FloorData[] floorData;
 
-    public int CurrentFloor = -1;
+    public int CurrentFloor { get; private set; } = -1;
+
+    private bool IsLastFloor()
+    {
+        return CurrentFloor >= floorData.Length - 1;
+    }
 
     private void Start()
     {
-        CurrentFloor = 0;
-
-        SpawnFloor(floorManager.CurrentSlot, floorData[0]);
-        SpawnFloor(floorManager.GetNextSlot(), floorData[1]);
-
-        floorManager.CurrentSlot.OnFloorCleared += OnFloorCleared;
+        Initialize();
     }
 
-    private void SpawnFloor(FloorSlot slot, FloorData data)
+    private void Initialize()
     {
+        CurrentFloor = 0;
+        floorManager.NormalizeSlotPositions();
+
+        SpawnFloor(floorManager.CurrentSlot, CurrentFloor);
+        floorManager.CurrentSlot.Activate();
+
+        if (HasFloorData(CurrentFloor + 1))
+        {
+            SpawnFloor(floorManager.NextSlot, CurrentFloor + 1);
+        }
+
+        SubscribeCurrentSlot();
+    }
+
+    private void OnFloorCleared()
+    {
+        UnsubscribeCurrentSlot();
+
+        if (IsLastFloor())
+        {
+            OnStageComplete();
+            return;
+        }
+
+        floorManager.AdvanceFloor();
+
+        CurrentFloor++;
+        floorManager.CurrentSlot.Activate();
+
+        int preloadFloor = CurrentFloor + 1;
+        if (HasFloorData(preloadFloor))
+            SpawnFloor(floorManager.NextSlot, preloadFloor);
+
+        SubscribeCurrentSlot();
+        stageEvents.RequestFloorCleared();
+    }
+
+    private void SpawnFloor(FloorSlot slot, int floorIndex)
+    {
+        if (!HasFloorData(floorIndex)) return;
+
+        FloorData data = floorData[floorIndex];
         slot.ClearEnemies();
 
         for (int i = 0; i < data.NormalEnemyCount; i++)
@@ -44,19 +87,17 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void OnFloorCleared()
+    private void SubscribeCurrentSlot()
+        => floorManager.CurrentSlot.OnFloorCleared += OnFloorCleared;
+
+    private void UnsubscribeCurrentSlot()
+        => floorManager.CurrentSlot.OnFloorCleared -= OnFloorCleared;
+
+    private bool HasFloorData(int index)
+        => index >= 0 && index < floorData.Length;
+
+    private void OnStageComplete()
     {
-        floorManager.CurrentSlot.OnFloorCleared -= OnFloorCleared;
-        floorManager.ChangeFloorSlot();
-
-        CurrentFloor++;
-
-        int nextFloor = CurrentFloor + 1;
-        if (nextFloor >= floorData.Length) return;
-
-        SpawnFloor(floorManager.GetNextSlot(), floorData[nextFloor]);
-        floorManager.CurrentSlot.OnFloorCleared += OnFloorCleared;
-
-        // 플레이어 originalPos로 이동
+        stageEvents.RequestStageComplete();
     }
 }

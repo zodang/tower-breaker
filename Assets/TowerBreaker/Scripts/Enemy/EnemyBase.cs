@@ -4,7 +4,7 @@ using DG.Tweening;
 
 public class EnemyBase : MonoBehaviour
 {
-    [SerializeField] protected CombatEvents combatEvents;
+    [SerializeField] protected CombatActionEvents combatActionEvents;
 
     public float MaxHp = 10f;
     public float CurrentHp;
@@ -13,6 +13,10 @@ public class EnemyBase : MonoBehaviour
 
     public Rigidbody2D RigidBody { get; private set; }
     public bool IsDead { get; private set; }
+    public bool IsMoving { get; private set; } = false;
+
+    public void StartMoving() => IsMoving = true;
+    public void StopMoving()  => IsMoving = false;
 
     public Action<EnemyBase> OnDied;
 
@@ -32,11 +36,14 @@ public class EnemyBase : MonoBehaviour
     protected virtual void Update()
     {
         // 기본 이동
+        if (!IsMoving) return;
         RigidBody.MovePosition(transform.position + Vector3.left * (Time.deltaTime * CurrentSpeed));
     }
 
     public virtual void PushBack(float force)
     {
+        if (!IsMoving) return;
+
         // 기본 밀림
         float pushForce = force / CurrentWeight;
         float targetPos = RigidBody.position.x + force + pushForce;
@@ -47,6 +54,8 @@ public class EnemyBase : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
+        if (!IsMoving) return;
+
         // 기본 피격
         CurrentHp -= damage;
         OnTakeDamage(damage);

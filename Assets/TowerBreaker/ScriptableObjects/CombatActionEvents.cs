@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 플레이어 공격, 방어 이벤트 관련
+/// </summary>
 [CreateAssetMenu(fileName = "CombatEvents", menuName = "Scriptable Objects/DefenseEvents")]
-public class CombatEvents : ScriptableObject
+public class CombatActionEvents : ScriptableObject
 {
     public event Action<List<NormalEnemy>, float> OnNormalAttack;
     public event Action<float> OnNormalDefense;

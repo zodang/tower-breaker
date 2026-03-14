@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class NormalCluster : MonoBehaviour
 {
-    [SerializeField] private CombatEvents combatEvents;
+    [SerializeField] private CombatActionEvents combatActionEvents;
     private readonly List<NormalEnemy> _units = new();
 
     private float _speedMultiple = 1f;
@@ -12,14 +12,14 @@ public class NormalCluster : MonoBehaviour
 
     private void OnEnable()
     {
-        combatEvents.OnNormalAttack += HandleNormalAttack;
-        combatEvents.OnNormalDefense += HandleNormalDefense;
+        combatActionEvents.OnNormalAttack += HandleNormalAttack;
+        combatActionEvents.OnNormalDefense += HandleNormalDefense;
     }
 
     private void OnDisable()
     {
-        combatEvents.OnNormalAttack -= HandleNormalAttack;
-        combatEvents.OnNormalDefense -= HandleNormalDefense;
+        combatActionEvents.OnNormalAttack -= HandleNormalAttack;
+        combatActionEvents.OnNormalDefense -= HandleNormalDefense;
     }
 
     public void Register(NormalEnemy unit)

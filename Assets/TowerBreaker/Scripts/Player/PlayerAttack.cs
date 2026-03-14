@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
     [SerializeField] private CombatConfig config;
-    [SerializeField] private CombatEvents combatEvents;
+    [SerializeField] private CombatActionEvents combatActionEvents;
     [SerializeField] private LayerMask enemyLayer;
 
     private readonly Collider2D[] _hitBuffer = new Collider2D[32];
@@ -58,12 +58,12 @@ public class PlayerAttack : MonoBehaviour
                     break;
 
                 case EliteEnemy elite:
-                    combatEvents.RequestEliteAttack(elite, config.AttackDamage);
+                    combatActionEvents.RequestEliteAttack(elite, config.AttackDamage);
                     break;
             }
         }
 
         if (_normalBuffer.Count > 0)
-            combatEvents.RequestNormalAttack(_normalBuffer, config.AttackDamage);
+            combatActionEvents.RequestNormalAttack(_normalBuffer, config.AttackDamage);
     }
 }

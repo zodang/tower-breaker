@@ -748,7 +748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a9e73fa011461841bd38c8e345f3661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NormalCluster
-  combatEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
+  combatActionEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
 --- !u!4 &605271977
 Transform:
   m_ObjectHideFlags: 0
@@ -1600,7 +1600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a9e73fa011461841bd38c8e345f3661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NormalCluster
-  combatEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
+  combatActionEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
 --- !u!4 &1058972107
 Transform:
   m_ObjectHideFlags: 0
@@ -1664,7 +1664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   config: {fileID: 11400000, guid: 176a1cc13e3b1ab4eaec620da97b5737, type: 2}
-  combatEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
+  combatActionEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 3072
@@ -1681,7 +1681,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDefense
   config: {fileID: 11400000, guid: 176a1cc13e3b1ab4eaec620da97b5737, type: 2}
-  combatEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
+  combatActionEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 3072
@@ -1699,6 +1699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   config: {fileID: 11400000, guid: 176a1cc13e3b1ab4eaec620da97b5737, type: 2}
+  stageEvents: {fileID: 11400000, guid: 1a3aaaf0a1de2294aa2ac3cc9f068ece, type: 2}
   rigidBody: {fileID: 1388806749}
   collider: {fileID: 1388806750}
   blockLayer:
@@ -2383,7 +2384,7 @@ Transform:
   m_GameObject: {fileID: 1422204111}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.35, y: -0.62, z: 0}
+  m_LocalPosition: {x: 3, y: -0.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2414,7 +2415,7 @@ Transform:
   m_GameObject: {fileID: 1446372739}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.35, y: -0.62, z: 0}
+  m_LocalPosition: {x: 3, y: -0.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2640,7 +2641,7 @@ Transform:
   m_GameObject: {fileID: 1506162947}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.35, y: -0.62, z: 0}
+  m_LocalPosition: {x: 3, y: -0.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2847,7 +2848,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a9e73fa011461841bd38c8e345f3661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NormalCluster
-  combatEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
+  combatActionEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
 --- !u!4 &1622271245
 Transform:
   m_ObjectHideFlags: 0
@@ -3183,15 +3184,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f01898a484c2e49a329d6552667753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  stageEvents: {fileID: 11400000, guid: 1a3aaaf0a1de2294aa2ac3cc9f068ece, type: 2}
   spawner: {fileID: 2009663979}
   floorManager: {fileID: 1612126555}
   floorData:
-  - {fileID: 11400000, guid: 28379948cf03b2740b11d968e4a9a373, type: 2}
   - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
+  - {fileID: 11400000, guid: 28379948cf03b2740b11d968e4a9a373, type: 2}
   - {fileID: 11400000, guid: c9fb8fa7302bffd4090cbe15e7ecf31c, type: 2}
   - {fileID: 11400000, guid: a08372343c6c25543975504bcd283b93, type: 2}
   - {fileID: 11400000, guid: cec010f34b7a5bb46941e3669936ee74, type: 2}
-  CurrentFloor: -1
 --- !u!4 &2009663978
 Transform:
   m_ObjectHideFlags: 0

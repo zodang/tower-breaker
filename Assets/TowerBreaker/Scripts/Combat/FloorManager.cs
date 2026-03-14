@@ -4,40 +4,53 @@ public class FloorManager : MonoBehaviour
 {
     [SerializeField] private FloorSlot[] floorSlots;
     [SerializeField] private float floorDistance = 3.75f;
-    public FloorSlot CurrentSlot => GetCurrentSlot();
-    public FloorSlot GetNextSlot()
+
+    private int _currentIndex = 0;
+    private int SlotCount => floorSlots.Length;
+    [SerializeField] private float[] cycleYPositions = { -3.25f, 0.5f, 4.25f };
+
+    public FloorSlot CurrentSlot => floorSlots[GetSlotIndex(0)];
+    public FloorSlot NextSlot    => floorSlots[GetSlotIndex(1)];
+
+    private int GetSlotIndex(int offset)
     {
-        return floorSlots[1];
+        return (_currentIndex + offset) % SlotCount;
     }
 
-    public FloorSlot GetCurrentSlot()
+    public void NormalizeSlotPositions()
     {
-        return floorSlots[0];
-    }
-
-    public void ChangeFloorSlot()
-    {
-        MoveFloorSlots();
-        RotateSlots();
-    }
-
-    private void MoveFloorSlots()
-    {
-        foreach (var slot in floorSlots)
+        // 슬롯을 cycleYPositions 기준으로 정렬
+        for (int i = 0; i < SlotCount; i++)
         {
-            slot.transform.position += Vector3.down * floorDistance;
+            int yIdx = (i + 1) % cycleYPositions.Length;
+            floorSlots[i].transform.position = new Vector3(
+                floorSlots[i].transform.position.x,
+                cycleYPositions[yIdx],
+                floorSlots[i].transform.position.z
+            );
         }
     }
 
-    private void RotateSlots()
+    public void AdvanceFloor()
     {
-        FloorSlot first = floorSlots[0];
+        RearrangeSlots();
+        _currentIndex = GetSlotIndex(1);
+    }
 
-        for(int i=0;i<floorSlots.Length-1;i++)
+    private void RearrangeSlots()
+    {
+        float[] yPositions = new float[SlotCount];
+        for (int i = 0; i < SlotCount; i++)
+            yPositions[i] = floorSlots[i].transform.position.y;
+
+        for (int i = 0; i < SlotCount; i++)
         {
-            floorSlots[i] = floorSlots[i+1];
+            int prevIdx = (i - 1 + SlotCount) % SlotCount;
+            floorSlots[i].transform.position = new Vector3(
+                floorSlots[i].transform.position.x,
+                yPositions[prevIdx],
+                floorSlots[i].transform.position.z
+            );
         }
-
-        floorSlots[floorSlots.Length-1] = first;
     }
 }
