@@ -1286,9 +1286,9 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 3072
-  AttackRange: 1
+  AttackRange: 0.5
   AttackDamage: 5
-  AttackInterval: 0.3
+  AttackInterval: 1
 --- !u!114 &1079525209
 MonoBehaviour:
   m_ObjectHideFlags: 0

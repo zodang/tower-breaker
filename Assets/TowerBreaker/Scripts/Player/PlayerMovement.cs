@@ -26,14 +26,6 @@ public class PlayerMovement : MonoBehaviour
         _canMove = value;
     }
 
-    public Sequence PlayFloorTransition(float exitX, Vector2 teleportPos, float enterX)
-    {
-        return DOTween.Sequence()
-            .Append(rigidBody.DOMoveX(exitX, 0.3f).SetEase(Ease.OutQuad))
-            .AppendCallback(() => rigidBody.position = teleportPos)
-            .Append(rigidBody.DOMoveX(enterX, 0.3f).SetEase(Ease.OutQuad));
-    }
-
     public void Move()
     {
         if (!_canMove || _isMoving) return;
@@ -56,7 +48,6 @@ public class PlayerMovement : MonoBehaviour
         _isMoving = false;
     }
 
-
     public void ReturnOriginalPosition()
     {
         _sequence?.Kill();
@@ -69,6 +60,22 @@ public class PlayerMovement : MonoBehaviour
                 x => rigidBody.MovePosition(new Vector2(x, rigidBody.position.y)),
                 endValue,
                 0.15f
+            )
+            .SetEase(Ease.OutQuad);
+    }
+
+    public void StepForward(float distance)
+    {
+        _sequence?.Kill();
+        rigidBody.linearVelocity = Vector2.zero;
+
+        float endValue = rigidBody.position.x + distance;
+
+        _sequence = DOTween.To(
+                () => rigidBody.position.x,
+                x => rigidBody.MovePosition(new Vector2(x, rigidBody.position.y)),
+                endValue,
+                0.05f
             )
             .SetEase(Ease.OutQuad);
     }

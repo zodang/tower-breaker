@@ -8,8 +8,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private PlayerInputEvents playerInputEvents;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private EnemySpawner spawner;
-    [SerializeField] private FloorData[] floorData;
 
+    [SerializeField] private FloorData[] floorData;
     [SerializeField] private FloorSlot floorSlotPrefab;
     [SerializeField] private Transform floorSlotRoot;
 
@@ -83,6 +83,18 @@ public class StageManager : MonoBehaviour
             Vector3 spawnPos = floorSlotRoot.position + Vector3.up * (3.75f * i);
             _floorSlots[i] = Instantiate(floorSlotPrefab, spawnPos, Quaternion.identity);
         }
+    }
+
+    private void SubscribeCurrentSlot()
+    {
+        CurrentSlot.OnFloorCleared += OnFloorCleared;
+        CurrentSlot.OnEnemyKilled += EnemyKillEffect;
+    }
+
+    private void UnsubscribeCurrentSlot()
+    {
+        CurrentSlot.OnFloorCleared -= OnFloorCleared;
+        CurrentSlot.OnEnemyKilled -= EnemyKillEffect;
     }
 
     private void OnFloorCleared()
@@ -159,16 +171,6 @@ public class StageManager : MonoBehaviour
             slot.RegisterEnemy(spawner.SpawnEliteEnemy(EliteEnemyType.HpElite, slot.spawnPoint));
     }
 
-    private void SubscribeCurrentSlot()
-    {
-        CurrentSlot.OnFloorCleared += OnFloorCleared;
-    }
-
-    private void UnsubscribeCurrentSlot()
-    {
-        CurrentSlot.OnFloorCleared -= OnFloorCleared;
-    }
-
     private bool HasNextFloor(int offset)
     {
         return CurrentFloor + offset < _floorSlots.Length && HasFloorData(CurrentFloor + offset);
@@ -179,4 +181,8 @@ public class StageManager : MonoBehaviour
         return index >= 0 && index < floorData.Length;
     }
 
+    private void EnemyKillEffect()
+    {
+        playerMovement.StepForward(0.25f);
+    }
 }

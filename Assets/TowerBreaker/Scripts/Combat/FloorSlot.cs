@@ -5,6 +5,7 @@ using UnityEngine;
 public class FloorSlot : MonoBehaviour
 {
     public event Action OnFloorCleared;
+    public event Action OnEnemyKilled;
 
     [SerializeField] public Transform spawnPoint;
     [SerializeField] private NormalCluster normalCluster;
@@ -23,6 +24,7 @@ public class FloorSlot : MonoBehaviour
 
     private void HandleEnemyDied(EnemyBase enemy)
     {
+        OnEnemyKilled?.Invoke();
         enemy.OnDied -= HandleEnemyDied;
 
         _aliveEnemies.Remove(enemy);
@@ -54,10 +56,5 @@ public class FloorSlot : MonoBehaviour
     public int DeadEnemyCount()
     {
         return _deadEnemies.Count;
-    }
-
-    public bool IsCleared()
-    {
-        return _aliveEnemies.Count == 0;
     }
 }
