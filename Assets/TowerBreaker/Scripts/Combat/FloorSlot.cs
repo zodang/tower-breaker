@@ -43,6 +43,19 @@ public class FloorSlot : MonoBehaviour
             enemy.StopMoving();
     }
 
+    public void PushAliveEnemies()
+    {
+        foreach (var enemy in _aliveEnemies)
+        {
+            enemy.PushBack(0.3f);
+        }
+    }
+
+    public int DeadEnemyCount()
+    {
+        return _deadEnemies.Count;
+    }
+
     public bool IsCleared()
     {
         return _aliveEnemies.Count == 0;

@@ -4,17 +4,53 @@ using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
-    [SerializeField] private PlayerMovement playerMovement;
-
     [SerializeField] private StageProgressEvents stageEvents;
+    [SerializeField] private PlayerInputEvents playerInputEvents;
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private EnemySpawner spawner;
-    [SerializeField] private FloorSlot[] floorSlots;  // 씬에 배치된 슬롯 10개
     [SerializeField] private FloorData[] floorData;
+
+    [SerializeField] private FloorSlot floorSlotPrefab;
+    [SerializeField] private Transform floorSlotRoot;
 
     public int CurrentFloor { get; private set; } = 0;
 
-    private FloorSlot CurrentSlot => floorSlots[CurrentFloor];
-    private bool IsLastFloor => CurrentFloor >= floorSlots.Length - 1;
+    private FloorSlot[] _floorSlots;
+    private FloorSlot CurrentSlot => _floorSlots[CurrentFloor];
+    private bool IsLastFloor => CurrentFloor >= _floorSlots.Length - 1;
+
+    private bool _isPaused = false;
+    private int _totalKillCount = 0;
+
+    private void OnEnable()
+    {
+        stageEvents.OnPlayerDamaged += PauseEnemy;
+        playerInputEvents.OnDefenseRequested += ResumeGame;
+    }
+
+    private void OnDisable()
+    {
+        stageEvents.OnPlayerDamaged -= PauseEnemy;
+        playerInputEvents.OnDefenseRequested -= ResumeGame;
+    }
+
+    private void PauseEnemy()
+    {
+        _isPaused = true;
+        CurrentSlot.PushAliveEnemies();
+        CurrentSlot.Deactivate();
+    }
+
+    private void ResumeGame()
+    {
+        if (!_isPaused) return;
+
+        CurrentSlot.Activate();
+        playerMovement.ReturnOriginalPosition();
+
+        _isPaused = false;
+    }
+
 
     private void Start()
     {
@@ -24,21 +60,37 @@ public class StageManager : MonoBehaviour
     private void Initialize()
     {
         CurrentFloor = 0;
+        SpawnFloorSlots();
 
-        // 현재 슬롯 스폰 + 활성화
+        // 현재 slot 설정
         SpawnFloor(CurrentFloor);
         CurrentSlot.Activate();
 
-        // 다음 슬롯 선행 스폰 (비활성)
-        if (HasNextFloor(1))
-            SpawnFloor(CurrentFloor + 1);
+        // 다음 slot 설정
+        if (HasNextFloor(1)) SpawnFloor(CurrentFloor + 1);
 
         SubscribeCurrentSlot();
+        stageEvents.RequestFloorStarted();
+        stageEvents.RequestFloorChanged(CurrentFloor + 1, floorData.Length);
+    }
+
+    private void SpawnFloorSlots()
+    {
+        _floorSlots = new FloorSlot[floorData.Length];
+
+        for (int i = 0; i < floorData.Length; i++)
+        {
+            Vector3 spawnPos = floorSlotRoot.position + Vector3.up * (3.75f * i);
+            _floorSlots[i] = Instantiate(floorSlotPrefab, spawnPos, Quaternion.identity);
+        }
     }
 
     private void OnFloorCleared()
     {
         UnsubscribeCurrentSlot();
+
+        _totalKillCount += CurrentSlot.DeadEnemyCount();
+        stageEvents.RequestEnemyKillCountChanged(_totalKillCount);
 
         if (IsLastFloor)
         {
@@ -46,12 +98,11 @@ public class StageManager : MonoBehaviour
             return;
         }
 
+
         CurrentFloor++;
-        CurrentSlot.Activate();
 
         // 다다음 슬롯 선행 스폰
-        if (HasNextFloor(1))
-            SpawnFloor(CurrentFloor + 1);
+        if (HasNextFloor(1)) SpawnFloor(CurrentFloor + 1);
 
         SubscribeCurrentSlot();
         stageEvents.RequestFloorCleared();
@@ -63,38 +114,39 @@ public class StageManager : MonoBehaviour
     {
         playerMovement.SetControllable(false);
 
-        yield return playerMovement.RigidBody.DOMoveX(3f, 0.3f)
+        yield return playerMovement.RigidBody.DOMoveX(3f, 0.5f)
             .SetEase(Ease.OutQuad)
             .WaitForCompletion();
 
         // 슬롯 스크롤 전 모든 적 이동 정지
-        foreach (var slot in floorSlots)
+        foreach (var slot in _floorSlots)
             slot.Deactivate();
 
         // 슬롯 스크롤 (적이 자식이므로 같이 내려감)
-        foreach (var slot in floorSlots)
+        foreach (var slot in _floorSlots)
             slot.transform.DOMoveY(slot.transform.position.y - 3.75f, 0.3f)
                 .SetEase(Ease.OutQuad);
 
         yield return new WaitForSeconds(0.3f);
-
-        // 스크롤 완료 후 현재 슬롯 적만 재활성화
-        CurrentSlot.Activate();
-
         playerMovement.RigidBody.position = new Vector2(-3f, -0.1f);
 
         yield return playerMovement.RigidBody.DOMoveX(-1.75f, 0.3f)
             .SetEase(Ease.OutQuad)
             .WaitForCompletion();
 
+        // 층 이동 완료 후
+        stageEvents.RequestFloorStarted();
+
+        CurrentSlot.Activate();
         playerMovement.SetControllable(true);
+        stageEvents.RequestFloorChanged(CurrentFloor + 1, floorData.Length);
     }
 
     private void SpawnFloor(int floorIndex)
     {
         if (!HasFloorData(floorIndex)) return;
 
-        FloorSlot slot = floorSlots[floorIndex];
+        FloorSlot slot = _floorSlots[floorIndex];
         FloorData data = floorData[floorIndex];
 
         for (int i = 0; i < data.NormalEnemyCount; i++)
@@ -108,14 +160,23 @@ public class StageManager : MonoBehaviour
     }
 
     private void SubscribeCurrentSlot()
-        => CurrentSlot.OnFloorCleared += OnFloorCleared;
+    {
+        CurrentSlot.OnFloorCleared += OnFloorCleared;
+    }
 
     private void UnsubscribeCurrentSlot()
-        => CurrentSlot.OnFloorCleared -= OnFloorCleared;
+    {
+        CurrentSlot.OnFloorCleared -= OnFloorCleared;
+    }
 
     private bool HasNextFloor(int offset)
-        => CurrentFloor + offset < floorSlots.Length && HasFloorData(CurrentFloor + offset);
+    {
+        return CurrentFloor + offset < _floorSlots.Length && HasFloorData(CurrentFloor + offset);
+    }
 
     private bool HasFloorData(int index)
-        => index >= 0 && index < floorData.Length;
+    {
+        return index >= 0 && index < floorData.Length;
+    }
+
 }

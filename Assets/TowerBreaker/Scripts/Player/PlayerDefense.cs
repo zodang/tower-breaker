@@ -7,17 +7,21 @@ using UnityEngine;
 /// </summary>
 public class PlayerDefense : MonoBehaviour
 {
-    [SerializeField] private CombatConfig config;
     [SerializeField] private CombatActionEvents combatActionEvents;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private Rigidbody2D rigidBody;
 
+    public float DefensePushForce = 0.5f;
+    public float DefenseCooldown = 0.8f;
+    public float DefenseGap = 0.5f;
+
+    public float PlayerOriginalPos = -1.75f;
     private bool _canDefense = true;
 
     public void Defense()
     {
         if (!_canDefense) return;
-        if (GetForwardGap() > config.DefenseGap) return;
+        if (GetForwardGap() > DefenseGap) return;
 
         StartCoroutine(DefenseRoutine());
     }
@@ -32,13 +36,13 @@ public class PlayerDefense : MonoBehaviour
         {
             if (col.TryGetComponent<EliteEnemy>(out var elite))
             {
-                combatActionEvents.RequestEliteDefense(elite, config.DefensePushForce);
+                combatActionEvents.RequestEliteDefense(elite, DefensePushForce);
             }
         }
 
-        combatActionEvents.RequestNormalDefense(config.DefensePushForce);
+        combatActionEvents.RequestNormalDefense(DefensePushForce);
         ReturnOriginalPosition();
-        yield return new WaitForSeconds(config.DefenseCooldown);
+        yield return new WaitForSeconds(DefenseCooldown);
 
         _canDefense = true;
     }
@@ -52,7 +56,7 @@ public class PlayerDefense : MonoBehaviour
         _sequence = DOTween.To(
                 () => rigidBody.position.x,
                 x => rigidBody.MovePosition(new Vector2(x, rigidBody.position.y)),
-                config.PlayerOriginalPos,
+                PlayerOriginalPos,
                 0.15f
             )
             .SetEase(Ease.OutQuad);

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DeadZone : MonoBehaviour
+public class BlockZone : MonoBehaviour
 {
     [SerializeField] private StageProgressEvents stageProgressEvents;
     [SerializeField] private Collider2D collider;
@@ -15,11 +15,6 @@ public class DeadZone : MonoBehaviour
     {
         stageProgressEvents.OnFloorStarted -= EnableCollision;
         stageProgressEvents.OnFloorCleared -= DisableCollision;
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        stageProgressEvents.RequestPlayerDamage();
     }
 
     private void EnableCollision() => collider.enabled = true;

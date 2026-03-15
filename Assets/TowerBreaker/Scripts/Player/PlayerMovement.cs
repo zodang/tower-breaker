@@ -9,11 +9,12 @@ public class PlayerMovement : MonoBehaviour
 {
     public Rigidbody2D RigidBody => rigidBody;
 
-    [SerializeField] private CombatConfig config;
     [SerializeField] private StageProgressEvents stageEvents;
     [SerializeField] private Rigidbody2D rigidBody;
     [SerializeField] private Collider2D collider;
     [SerializeField] private LayerMask blockLayer;
+
+    public float DashCooldown = 0.5f;
 
     private bool _isMoving = false;
     private bool _canMove = true;
@@ -49,14 +50,14 @@ public class PlayerMovement : MonoBehaviour
         _isMoving = true;
 
         ReturnOriginalPosition();
-        yield return new WaitForSeconds(config.DashCooldown);
+        yield return new WaitForSeconds(DashCooldown);
 
         _canMove = true;
         _isMoving = false;
     }
 
 
-    private void ReturnOriginalPosition()
+    public void ReturnOriginalPosition()
     {
         _sequence?.Kill();
         rigidBody.linearVelocity = Vector2.zero;

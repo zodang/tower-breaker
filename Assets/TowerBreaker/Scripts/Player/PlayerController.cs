@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private PlayerMovement _playerMovement;
     private PlayerDefense _playerDefense;
     private PlayerAttack _playerAttack;
+    private PlayerHealth _playerHealth;
 
     private void OnEnable()
     {

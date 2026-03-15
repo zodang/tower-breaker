@@ -7,9 +7,12 @@ using UnityEngine;
 /// </summary>
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] private CombatConfig config;
     [SerializeField] private CombatActionEvents combatActionEvents;
     [SerializeField] private LayerMask enemyLayer;
+
+    public float AttackRange = 1f;
+    public float AttackDamage = 5f;
+    public float AttackInterval = 0.3f;
 
     private readonly Collider2D[] _hitBuffer = new Collider2D[32];
     private readonly List<NormalEnemy> _normalBuffer = new();
@@ -31,7 +34,7 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator AttackLoop()
     {
-        var interval = new WaitForSeconds(config.AttackInterval);
+        var interval = new WaitForSeconds(AttackInterval);
         while (true)
         {
             PerformAttack();
@@ -44,7 +47,7 @@ public class PlayerAttack : MonoBehaviour
         _normalBuffer.Clear();
 
         int hitCount = Physics2D.OverlapCircleNonAlloc(
-            transform.position, config.AttackRange, _hitBuffer, enemyLayer
+            transform.position, AttackRange, _hitBuffer, enemyLayer
         );
         for (int i = 0; i < hitCount; i++)
         {
@@ -58,12 +61,12 @@ public class PlayerAttack : MonoBehaviour
                     break;
 
                 case EliteEnemy elite:
-                    combatActionEvents.RequestEliteAttack(elite, config.AttackDamage);
+                    combatActionEvents.RequestEliteAttack(elite, AttackDamage);
                     break;
             }
         }
 
         if (_normalBuffer.Count > 0)
-            combatActionEvents.RequestNormalAttack(_normalBuffer, config.AttackDamage);
+            combatActionEvents.RequestNormalAttack(_normalBuffer, AttackDamage);
     }
 }
