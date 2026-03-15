@@ -183,8 +183,8 @@ Transform:
   m_GameObject: {fileID: 269777447}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 1, z: 1}
+  m_LocalPosition: {x: 0.1, y: 0, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1388806748}
@@ -238,7 +238,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5bfeb0bca491a0f48ac2a4e4730c669f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -482,7 +482,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.19215687, g: 0.18431373, b: 0.18431373, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1132,7 +1132,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &993761749
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1544,14 +1544,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.88386685, b: 0.08962262, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 05c0c280818fd814c84f3b501d20d6d9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1834,14 +1834,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.16509432, b: 0.16509432, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 75947ddc0425d834b9b1e5790f8b9af9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1934,7 +1934,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1599437607
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2162,14 +2162,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.0990566, g: 0.12529162, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e251a8d4fb65f8a49bb221ae147e7f5e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2249,7 +2249,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1878451384
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2387,16 +2387,15 @@ MonoBehaviour:
   spawner: {fileID: 2009663979}
   floorData:
   - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
+  - {fileID: 11400000, guid: 28379948cf03b2740b11d968e4a9a373, type: 2}
+  - {fileID: 11400000, guid: c9fb8fa7302bffd4090cbe15e7ecf31c, type: 2}
+  - {fileID: 11400000, guid: a08372343c6c25543975504bcd283b93, type: 2}
+  - {fileID: 11400000, guid: cec010f34b7a5bb46941e3669936ee74, type: 2}
   - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
-  - {fileID: 11400000, guid: 2ef8e7607aef766439bf55c414548ee3, type: 2}
+  - {fileID: 11400000, guid: 28379948cf03b2740b11d968e4a9a373, type: 2}
+  - {fileID: 11400000, guid: c9fb8fa7302bffd4090cbe15e7ecf31c, type: 2}
+  - {fileID: 11400000, guid: a08372343c6c25543975504bcd283b93, type: 2}
+  - {fileID: 11400000, guid: cec010f34b7a5bb46941e3669936ee74, type: 2}
   floorSlotPrefab: {fileID: 4574953915184648571, guid: e013c0f697eda8949955dcb57d7ce00e, type: 3}
   floorSlotRoot: {fileID: 906047419}
 --- !u!4 &2009663978
