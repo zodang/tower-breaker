@@ -1,21 +1,20 @@
+using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
-/// <summary>
-/// 게임 진행 관련 기능 관리
-/// </summary>
 public class StageManager : MonoBehaviour
 {
+    [SerializeField] private PlayerMovement playerMovement;
+
     [SerializeField] private StageProgressEvents stageEvents;
     [SerializeField] private EnemySpawner spawner;
-    [SerializeField] private FloorManager floorManager;
+    [SerializeField] private FloorSlot[] floorSlots;  // 씬에 배치된 슬롯 10개
     [SerializeField] private FloorData[] floorData;
 
-    public int CurrentFloor { get; private set; } = -1;
+    public int CurrentFloor { get; private set; } = 0;
 
-    private bool IsLastFloor()
-    {
-        return CurrentFloor >= floorData.Length - 1;
-    }
+    private FloorSlot CurrentSlot => floorSlots[CurrentFloor];
+    private bool IsLastFloor => CurrentFloor >= floorSlots.Length - 1;
 
     private void Start()
     {
@@ -25,15 +24,14 @@ public class StageManager : MonoBehaviour
     private void Initialize()
     {
         CurrentFloor = 0;
-        floorManager.NormalizeSlotPositions();
 
-        SpawnFloor(floorManager.CurrentSlot, CurrentFloor);
-        floorManager.CurrentSlot.Activate();
+        // 현재 슬롯 스폰 + 활성화
+        SpawnFloor(CurrentFloor);
+        CurrentSlot.Activate();
 
-        if (HasFloorData(CurrentFloor + 1))
-        {
-            SpawnFloor(floorManager.NextSlot, CurrentFloor + 1);
-        }
+        // 다음 슬롯 선행 스폰 (비활성)
+        if (HasNextFloor(1))
+            SpawnFloor(CurrentFloor + 1);
 
         SubscribeCurrentSlot();
     }
@@ -42,62 +40,82 @@ public class StageManager : MonoBehaviour
     {
         UnsubscribeCurrentSlot();
 
-        if (IsLastFloor())
+        if (IsLastFloor)
         {
-            OnStageComplete();
+            stageEvents.RequestStageComplete();
             return;
         }
 
-        floorManager.AdvanceFloor();
-
         CurrentFloor++;
-        floorManager.CurrentSlot.Activate();
+        CurrentSlot.Activate();
 
-        int preloadFloor = CurrentFloor + 1;
-        if (HasFloorData(preloadFloor))
-            SpawnFloor(floorManager.NextSlot, preloadFloor);
+        // 다다음 슬롯 선행 스폰
+        if (HasNextFloor(1))
+            SpawnFloor(CurrentFloor + 1);
 
         SubscribeCurrentSlot();
         stageEvents.RequestFloorCleared();
+
+        StartCoroutine(FloorTransitionRoutine());
     }
 
-    private void SpawnFloor(FloorSlot slot, int floorIndex)
+    private IEnumerator FloorTransitionRoutine()
+    {
+        playerMovement.SetControllable(false);
+
+        yield return playerMovement.RigidBody.DOMoveX(3f, 0.3f)
+            .SetEase(Ease.OutQuad)
+            .WaitForCompletion();
+
+        // 슬롯 스크롤 전 모든 적 이동 정지
+        foreach (var slot in floorSlots)
+            slot.Deactivate();
+
+        // 슬롯 스크롤 (적이 자식이므로 같이 내려감)
+        foreach (var slot in floorSlots)
+            slot.transform.DOMoveY(slot.transform.position.y - 3.75f, 0.3f)
+                .SetEase(Ease.OutQuad);
+
+        yield return new WaitForSeconds(0.3f);
+
+        // 스크롤 완료 후 현재 슬롯 적만 재활성화
+        CurrentSlot.Activate();
+
+        playerMovement.RigidBody.position = new Vector2(-3f, -0.1f);
+
+        yield return playerMovement.RigidBody.DOMoveX(-1.75f, 0.3f)
+            .SetEase(Ease.OutQuad)
+            .WaitForCompletion();
+
+        playerMovement.SetControllable(true);
+    }
+
+    private void SpawnFloor(int floorIndex)
     {
         if (!HasFloorData(floorIndex)) return;
 
+        FloorSlot slot = floorSlots[floorIndex];
         FloorData data = floorData[floorIndex];
-        slot.ClearEnemies();
 
         for (int i = 0; i < data.NormalEnemyCount; i++)
-        {
-            var enemy = spawner.SpawnNormalEnemy(slot.spawnPoint);
-            slot.RegisterEnemy(enemy);
-        }
+            slot.RegisterEnemy(spawner.SpawnNormalEnemy(slot.spawnPoint));
 
         for (int i = 0; i < data.SpeedEliteCount; i++)
-        {
-            var enemy = spawner.SpawnEliteEnemy(EliteEnemyType.SpeedElite, slot.spawnPoint);
-            slot.RegisterEnemy(enemy);
-        }
+            slot.RegisterEnemy(spawner.SpawnEliteEnemy(EliteEnemyType.SpeedElite, slot.spawnPoint));
 
         for (int i = 0; i < data.HpEliteCount; i++)
-        {
-            var enemy = spawner.SpawnEliteEnemy(EliteEnemyType.HpElite, slot.spawnPoint);
-            slot.RegisterEnemy(enemy);
-        }
+            slot.RegisterEnemy(spawner.SpawnEliteEnemy(EliteEnemyType.HpElite, slot.spawnPoint));
     }
 
     private void SubscribeCurrentSlot()
-        => floorManager.CurrentSlot.OnFloorCleared += OnFloorCleared;
+        => CurrentSlot.OnFloorCleared += OnFloorCleared;
 
     private void UnsubscribeCurrentSlot()
-        => floorManager.CurrentSlot.OnFloorCleared -= OnFloorCleared;
+        => CurrentSlot.OnFloorCleared -= OnFloorCleared;
+
+    private bool HasNextFloor(int offset)
+        => CurrentFloor + offset < floorSlots.Length && HasFloorData(CurrentFloor + offset);
 
     private bool HasFloorData(int index)
         => index >= 0 && index < floorData.Length;
-
-    private void OnStageComplete()
-    {
-        stageEvents.RequestStageComplete();
-    }
 }

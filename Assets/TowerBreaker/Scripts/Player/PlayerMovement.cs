@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
+    public Rigidbody2D RigidBody => rigidBody;
+
     [SerializeField] private CombatConfig config;
     [SerializeField] private StageProgressEvents stageEvents;
     [SerializeField] private Rigidbody2D rigidBody;
@@ -18,34 +20,17 @@ public class PlayerMovement : MonoBehaviour
 
     private Tween _sequence;
 
-    private void OnEnable()
+    public void SetControllable(bool value)
     {
-        stageEvents.OnFloorCleared += HandleFloorCleared;
+        _canMove = value;
     }
 
-    private void OnDisable()
+    public Sequence PlayFloorTransition(float exitX, Vector2 teleportPos, float enterX)
     {
-        stageEvents.OnFloorCleared -= HandleFloorCleared;
-    }
-
-    private void HandleFloorCleared()
-    {
-        // 진행 중인 이동 상태 초기화
-        StopAllCoroutines();
-        _isMoving = false;
-        _canMove = true;
-
-        // Tween으로 통일 (MovePosition 단발 호출 대신)
-        _sequence?.Kill();
-        rigidBody.linearVelocity = Vector2.zero;
-
-        _sequence = DOTween.To(
-                () => rigidBody.position.x,
-                x => rigidBody.MovePosition(new Vector2(x, rigidBody.position.y)),
-                config.PlayerOriginalPos,
-                0.15f
-            )
-            .SetEase(Ease.OutQuad);
+        return DOTween.Sequence()
+            .Append(rigidBody.DOMoveX(exitX, 0.3f).SetEase(Ease.OutQuad))
+            .AppendCallback(() => rigidBody.position = teleportPos)
+            .Append(rigidBody.DOMoveX(enterX, 0.3f).SetEase(Ease.OutQuad));
     }
 
     public void Move()

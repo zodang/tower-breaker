@@ -19,7 +19,6 @@ public class PlayerDefense : MonoBehaviour
         if (!_canDefense) return;
         if (GetForwardGap() > config.DefenseGap) return;
 
-        Debug.Log("방어");
         StartCoroutine(DefenseRoutine());
     }
 

@@ -47,13 +47,4 @@ public class FloorSlot : MonoBehaviour
     {
         return _aliveEnemies.Count == 0;
     }
-
-    public void ClearEnemies()
-    {
-        foreach (var enemy in _aliveEnemies)
-            Destroy(enemy.gameObject);
-
-        _aliveEnemies.Clear();
-        _deadEnemies.Clear();
-    }
 }

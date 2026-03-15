@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   Type: 0
   Hp: 5
-  Speed: 4
+  Speed: 10
   Weight: 1

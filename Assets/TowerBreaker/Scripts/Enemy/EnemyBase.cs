@@ -13,7 +13,8 @@ public class EnemyBase : MonoBehaviour
 
     public Rigidbody2D RigidBody { get; private set; }
     public bool IsDead { get; private set; }
-    public bool IsMoving { get; private set; } = false;
+    public bool IsMoving = false;
+    public bool IsPushing = false;
 
     public void StartMoving() => IsMoving = true;
     public void StopMoving()  => IsMoving = false;
@@ -35,21 +36,22 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        // 기본 이동
         if (!IsMoving) return;
-        RigidBody.MovePosition(transform.position + Vector3.left * (Time.deltaTime * CurrentSpeed));
+        if (IsPushing) return;
+        RigidBody.MovePosition(RigidBody.position + Vector2.left * (Time.deltaTime * CurrentSpeed));
     }
 
     public virtual void PushBack(float force)
     {
         if (!IsMoving) return;
+        IsPushing = true;
 
         // 기본 밀림
         float pushForce = force / CurrentWeight;
         float targetPos = RigidBody.position.x + force + pushForce;
 
         RigidBody.DOKill();
-        RigidBody.DOMoveX(targetPos, 0.15f).SetEase(Ease.OutQuad);
+        RigidBody.DOMoveX(targetPos, 0.15f).SetEase(Ease.OutQuad).OnComplete(()=>IsPushing = false);
     }
 
     public virtual void TakeDamage(float damage)
