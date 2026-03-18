@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class NormalCluster : MonoBehaviour
@@ -8,18 +7,16 @@ public class NormalCluster : MonoBehaviour
     private readonly List<NormalEnemy> _units = new();
 
     private float _speedMultiple = 1f;
-    private float _hpMultiple = 1;
+    private float _hpMultiple = 1f;
     private bool _isPushing = false;
 
     private void OnEnable()
     {
-        combatActionEvents.OnNormalAttack += HandleNormalAttack;
         combatActionEvents.OnNormalDefense += HandleNormalDefense;
     }
 
     private void OnDisable()
     {
-        combatActionEvents.OnNormalAttack -= HandleNormalAttack;
         combatActionEvents.OnNormalDefense -= HandleNormalDefense;
     }
 
@@ -41,14 +38,18 @@ public class NormalCluster : MonoBehaviour
         if (unit is NormalEnemy normalUnit) Unregister(normalUnit);
     }
 
-    private void HandleNormalAttack(List<NormalEnemy> enemies, float force)
+    public void ReceiveAttack(List<NormalEnemy> enemies, float force)
     {
         foreach (var enemy in enemies)
         {
             if (enemy == null) continue;
-
             enemy.TakeDamage(force);
         }
+    }
+
+    public void ReceiveDefense(float force)
+    {
+        PushEnemies(force);
     }
 
     private void HandleNormalDefense(float force)

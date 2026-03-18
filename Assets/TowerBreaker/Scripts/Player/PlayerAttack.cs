@@ -10,12 +10,13 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private CombatActionEvents combatActionEvents;
     [SerializeField] private LayerMask enemyLayer;
 
-    public float AttackRange = 1f;
+    public float AttackRange = 0.5f;
     public float AttackDamage = 5f;
-    public float AttackInterval = 0.3f;
+    public float AttackInterval = 1f;
 
     private readonly Collider2D[] _hitBuffer = new Collider2D[32];
     private readonly List<NormalEnemy> _normalBuffer = new();
+    private readonly HashSet<EnemyBase> _hitEnemies = new();
 
     private Coroutine _attackRoutine;
     public void AttackStart()
@@ -45,14 +46,14 @@ public class PlayerAttack : MonoBehaviour
     private void PerformAttack()
     {
         _normalBuffer.Clear();
+        _hitEnemies.Clear();
 
-        int hitCount = Physics2D.OverlapCircleNonAlloc(
-            transform.position, AttackRange, _hitBuffer, enemyLayer
-        );
+        int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, AttackRange, _hitBuffer, enemyLayer);
+
         for (int i = 0; i < hitCount; i++)
         {
-            // EnemyBase 한 번만 가져온 후 타입 분기 → GetComponent 호출 최소화
             if (!_hitBuffer[i].TryGetComponent<EnemyBase>(out var enemy)) continue;
+            if (!_hitEnemies.Add(enemy)) continue;
 
             switch (enemy)
             {

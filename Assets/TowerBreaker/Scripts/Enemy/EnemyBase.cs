@@ -5,6 +5,7 @@ using DG.Tweening;
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] protected CombatActionEvents combatActionEvents;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     public float MaxHp = 10f;
     public float CurrentHp;
@@ -34,11 +35,11 @@ public class EnemyBase : MonoBehaviour
         CurrentWeight = weight;
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
         if (!IsMoving) return;
         if (IsPushing) return;
-        RigidBody.MovePosition(RigidBody.position + Vector2.left * (Time.deltaTime * CurrentSpeed));
+        RigidBody.MovePosition(RigidBody.position + Vector2.left * (Time.fixedDeltaTime * CurrentSpeed));
     }
 
     public virtual void PushBack(float force)
@@ -62,7 +63,27 @@ public class EnemyBase : MonoBehaviour
         CurrentHp -= damage;
         OnTakeDamage(damage);
 
-        if (CurrentHp <= 0) Die();
+        CameraEffect.Instance.Shake();
+
+        if (CurrentHp <= 0)
+        {
+            Die();
+            return;
+        }
+
+        HitEffect();
+    }
+
+    private void HitEffect()
+    {
+        spriteRenderer.DOKill();
+        spriteRenderer.color = Color.white;
+
+        spriteRenderer.DOColor(Color.red, 0.05f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() =>
+                spriteRenderer.DOColor(Color.white, 0.15f)
+                    .SetEase(Ease.InQuad));
     }
 
     public virtual void Die()

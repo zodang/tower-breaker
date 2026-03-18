@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: HpEliteEnemy
   m_EditorClassIdentifier: Assembly-CSharp::EliteEnemyData
   Type: 1
-  Hp: 25
-  Speed: 10
-  Weight: 1
+  Hp: 50
+  Speed: 0.9
+  Weight: 2

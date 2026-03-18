@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: StageData 2
   m_EditorClassIdentifier: Assembly-CSharp::FloorData
   FloorIdx: 2
-  NormalEnemyCount: 5
+  NormalEnemyCount: 10
   SpeedEliteCount: 0
   HpEliteCount: 1

@@ -212,6 +212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EliteEnemy
   combatActionEvents: {fileID: 11400000, guid: 92a6dad639ec7bc4d85b2376e011e71e, type: 2}
+  spriteRenderer: {fileID: 7894194662029022564}
   MaxHp: 10
   CurrentHp: 0
   CurrentSpeed: 1

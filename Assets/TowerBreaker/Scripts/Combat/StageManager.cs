@@ -6,6 +6,8 @@ public class StageManager : MonoBehaviour
 {
     [SerializeField] private StageProgressEvents stageEvents;
     [SerializeField] private PlayerInputEvents playerInputEvents;
+    [SerializeField] private CombatActionEvents combatActionEvents;
+
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private EnemySpawner spawner;
 
@@ -89,12 +91,14 @@ public class StageManager : MonoBehaviour
     {
         CurrentSlot.OnFloorCleared += OnFloorCleared;
         CurrentSlot.OnEnemyKilled += EnemyKillEffect;
+        combatActionEvents.OnNormalAttack += CurrentSlot.HandleAttack;
     }
 
     private void UnsubscribeCurrentSlot()
     {
         CurrentSlot.OnFloorCleared -= OnFloorCleared;
         CurrentSlot.OnEnemyKilled -= EnemyKillEffect;
+        combatActionEvents.OnNormalAttack -= CurrentSlot.HandleAttack;
     }
 
     private void OnFloorCleared()

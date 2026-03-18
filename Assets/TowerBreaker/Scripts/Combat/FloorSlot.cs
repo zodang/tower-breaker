@@ -45,6 +45,12 @@ public class FloorSlot : MonoBehaviour
             enemy.StopMoving();
     }
 
+    public void HandleAttack(List<NormalEnemy> enemies, float damage)
+    {
+        normalCluster.ReceiveAttack(enemies, damage);
+    }
+
+
     public void PushAliveEnemies()
     {
         foreach (var enemy in _aliveEnemies)

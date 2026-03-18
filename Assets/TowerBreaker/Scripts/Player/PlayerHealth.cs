@@ -26,6 +26,7 @@ public class PlayerHealth : MonoBehaviour
     {
         CurrentLives = Mathf.Max(0, CurrentLives - 1);
         stageProgressEvents.RequestLivesChanged(CurrentLives);
+        CameraEffect.Instance.Shake(0.8f, 0.2f, 100f);
 
         if (CurrentLives <= 0)
             stageProgressEvents.RequestGameOver();
